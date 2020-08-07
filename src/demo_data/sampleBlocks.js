@@ -19,7 +19,7 @@ module.exports = [
     },
     node: {
       title: 'Update database',
-      description: '<span>Triggers when somebody performs a <span class="font-bold">specified action</span></span>',
+      description: '<span>Triggers when somebody performs a  <span class="font-bold">specified action</span></span>',
       icon: 'errorred',
     },
   },

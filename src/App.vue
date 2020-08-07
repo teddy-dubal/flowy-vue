@@ -5,7 +5,6 @@
     </div>
     <div class="flex-grow overflow-hidden flex flex-row flex-no-wrap">
       <div class="z-40 flex-shrink pl-6 pt-6 bg-white border-r border-grey-400">
-
         <div class="side z-50">
           <div class="text-lg font-bold mb-4">Blocks</div>
           <div>
@@ -40,6 +39,7 @@
           class="h-full w-full p-6"
           :nodes="nodes"
           @drag-start="onDragStart"
+          @drag-stop="onDragStop"
           @add="add"
           @move="move"
           @remove="remove"
@@ -62,12 +62,9 @@ import generateId from './lib/generateId';
 import nodes from './demo_data/simple';
 import blocks from './demo_data/sampleBlocks';
 
-
 export default {
   name: 'app',
-  components: {
-
-  },
+  components: {},
   data: () => ({
     holder: [],
     dragging: false,
@@ -82,18 +79,15 @@ export default {
     },
     onDragStopNewBlock(event) {
       console.log('onDragStopNewBlock', event);
+      console.info(this.newDraggingBlock, this.nodes);
       this.newDraggingBlock = null;
     },
-    onDropBlock(_event) {
-
-    },
+    onDropBlock(_event) {},
     beforeAdd() {
       console.log('before add');
       return true;
     },
-    afterAdd() {
-
-    },
+    afterAdd() {},
     onEnterDrop(event) {
       console.log('entered drop');
       return true;
@@ -105,9 +99,7 @@ export default {
       }
       return true;
     },
-    onEnter() {
-
-    },
+    onEnter() {},
     addNode(_event) {
       const id = this.generateId();
       this.nodes.push({
@@ -135,10 +127,13 @@ export default {
       console.log('onDragStart', event);
       this.dragging = true;
     },
+    onDragStop(event) {
+      console.log('onDragStop', event);
+      console.info(this.nodes);
+      this.dragging = false;
+    },
   },
-  watch: {
-
-  },
+  watch: {},
 };
 </script>
 
