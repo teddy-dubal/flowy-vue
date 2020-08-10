@@ -28,7 +28,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
   # commit
   git add -f \
-    dist/lib/*.js
+    dist/lib/*.js dist/lib/*.css
   git commit -m "build: build $VERSION"
 
   # tag version
