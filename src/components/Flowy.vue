@@ -1,27 +1,36 @@
 <template language="html">
-  <div
-    class="flowy overflow-auto"
-    :class="{
-      dragging: dragging
-    }"
+  <dropzone
+    :data="{}"
+    group="main_group"
+    @enter="onEnterDrag"
+    @leave="onLeaveDrag"
+    @drop="onDropDp"
+    @receive="onDragReceive({ ...$event})"
   >
-    <div class="flowy-tree flex flex-row flex-no-wrap relative">
-      <FlowyNode
-        v-bind="{ ...$props }"
-        v-on="{ ...$listeners }"
-        :node="node"
-        :key="node.id"
-        v-for="node in parentNodes"
-        @drag-start="onDragStart($event)"
-        @drag-stop="onDragStop($event)"
-        @enter-drop="onEnterDrop($event)"
-        :before-move="onBeforeMove"
-        :before-add="onBeforeAdd"
-        :is-dragging="dragging"
-      >
-      </FlowyNode>
-    </div>
-  </div>
+    <template #default="scope">
+      <div :class="scope">
+        <div class="flowy overflow-auto" :class="{
+      dragging: dragging
+    }">
+          <div class="flowy-tree flex flex-row flex-no-wrap relative">
+            <FlowyNode
+              v-bind="{ ...$props }"
+              v-on="{ ...$listeners }"
+              :node="node"
+              :key="node.id"
+              v-for="node in parentNodes"
+              @drag-start="onDragStart($event)"
+              @drag-stop="onDragStop($event)"
+              @enter-drop="onEnterDrop($event)"
+              :before-move="onBeforeMove"
+              :before-add="onBeforeAdd"
+              :is-dragging="dragging"
+            ></FlowyNode>
+          </div>
+        </div>
+      </div>
+    </template>
+  </dropzone>
 </template>
 
 <script>
@@ -34,6 +43,10 @@ export default {
     nodes: {
       type: Array,
       required: false,
+    },
+    onEnterDragFn: {
+      type: Function,
+      default: () => true,
     },
     beforeMove: {
       type: Function,
@@ -62,8 +75,8 @@ export default {
       return this.draggingNode !== false && this.draggingNode !== null;
     },
   },
-  mounted() { },
-  destroyed() { },
+  mounted() {},
+  destroyed() {},
   methods: {
     setNotDragging() {
       setTimeout(() => {
@@ -98,7 +111,20 @@ export default {
         parentId,
       });
     },
-    onDragEnd(_event) { },
+    onDragEnd(_event) {},
+    //
+    onEnterDrag() {
+      this.$emit('dpz-enter-drag');
+    },
+    onLeaveDrag() {
+      this.$emit('dpz-leave-drag');
+    },
+    onDragReceive($e) {
+      this.$emit('dpz-receive-drag');
+    },
+    onDropDp() {
+      this.$emit('dpz-drop');
+    },
   },
 };
 </script>

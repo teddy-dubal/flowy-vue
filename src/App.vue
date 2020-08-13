@@ -38,6 +38,7 @@
         <flowy
           class="h-full w-full p-6"
           :nodes="nodes"
+          @dpz-receive-drag="onDragReceive"
           @drag-start="onDragStart"
           @drag-stop="onDragStop"
           @add="add"
@@ -45,7 +46,6 @@
           @remove="remove"
           :beforeAdd="beforeAdd"
           :beforeMove="beforeMove"
-          :onEnterDragFn="onEnter"
         ></flowy>
       </div>
     </div>
@@ -59,7 +59,7 @@ import Vue from 'vue';
 import find from 'lodash/find';
 import findIndex from 'lodash/findIndex';
 import generateId from './lib/generateId';
-import nodes from './demo_data/simple';
+// import nodes from './demo_data/simple';
 import blocks from './demo_data/sampleBlocks';
 
 export default {
@@ -69,7 +69,7 @@ export default {
     holder: [],
     dragging: false,
     blocks,
-    nodes,
+    nodes: [],
     newDraggingBlock: null,
   }),
   methods: {
@@ -79,7 +79,6 @@ export default {
     },
     onDragStopNewBlock(event) {
       console.log('onDragStopNewBlock', event);
-      console.info(this.newDraggingBlock, this.nodes);
       this.newDraggingBlock = null;
     },
     onDropBlock(_event) {},
@@ -93,21 +92,24 @@ export default {
       return true;
     },
     beforeMove({ to, from }) {
-      console.log(to, from);
+      console.log('beforeMove', to, from);
       if (from && from.id === '1') {
         return false;
       }
       return true;
     },
-    onEnter() {},
-    addNode(_event) {
-      const id = this.generateId();
-      this.nodes.push({
-        ..._event.node,
-        id,
-      });
+    onEnter() {
+      console.info('onEnter');
     },
+    // addNode(_event) {
+    //   const id = this.generateId();
+    //   this.nodes.push({
+    //     ..._event.node,
+    //     id,
+    //   });
+    // },
     remove(event) {
+      console.log('remove', event);
       const nodeIndex = findIndex(this.nodes, { id: event.node.id });
       this.nodes.splice(nodeIndex, 1);
     },
@@ -117,11 +119,24 @@ export default {
       dragged.parentId = to.id;
     },
     add(event) {
+      console.log('add', event);
       const id = generateId();
       this.nodes.push({
         id,
         ...event.node,
       });
+    },
+    onDragReceive(event) {
+      if (this.nodes.length === 0) {
+        const id = generateId();
+        this.nodes.push({
+          id,
+          data: this.newDraggingBlock.props,
+          nodeComponent: this.newDraggingBlock.componentName,
+          parentId: '-1',
+        });
+        console.info(this.nodes, this.newDraggingBlock);
+      }
     },
     onDragStart(event) {
       console.log('onDragStart', event);
@@ -129,7 +144,6 @@ export default {
     },
     onDragStop(event) {
       console.log('onDragStop', event);
-      console.info(this.nodes);
       this.dragging = false;
     },
   },
